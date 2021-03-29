@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=no">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <link rel="stylesheet" href="./reset.css">
+  <title>硅谷外卖</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <p>hahahhahah</p>
+  <!-- built files will be auto injected -->
+
+  <script type="text/javascript">
+
+    function remRefresh() {
+      // 1. 获取屏幕宽度
+      let clientWidth = document.documentElement.clientWidth;
+      // 2. 将屏幕的宽度等分： 16 10 等分的目的： 1) 降低单位rem值的大小便于换算 2) 提高精确度
+      let rem = clientWidth / 10;
+      // 2. 设置根节点字体的大小
+      document.documentElement.style.fontSize = rem + 'px'
+
+      // 3. 设置body字体的大小
+      document.body.style.fontSize = '16px'
+    }
+
+    /* 页面加载显示的事件 */
+    window.addEventListener('pageshow', () => {
+      remRefresh()
+    })
+
+    /* 窗口大小改变的事件 */
+    let timeoutId
+    window.addEventListener('resize', () => {
+      // 函数防抖, !!转化为布尔值
+      !!timeoutId && clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        console.log('resize');
+        remRefresh()
+      }, 300)
+    })
+
+
+  </script>
+
+
+</body>
+
+</html>
