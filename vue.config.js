@@ -1,8 +1,8 @@
 const path = require('path')
 const px2rem = require('postcss-px2rem')
-// 配置postcs-px2rem
+/* 配置postcs-px2rem */
 const postcss = px2rem({
-  remUnit: 75   //设计稿等分之后的值，等分的比例同页面rem的比例是一致的
+  remUnit: 75                               // 设计稿等分之后的值，等分的比例同页面rem的比例是一致的
 })
 
 module.exports = {  
