@@ -140,4 +140,74 @@ export default {
 /deep/.swiper-pagination-bullet-active 
     opacity 1
     background red 
+
+
+
+<!-- 老版本初始化处理 -->
+/*
+  解决swiper轮播不正常的问题?
+  方式1: watch + nextTick()
+  方式2: callback + nextTick()
+  方式3: 利用dipatch()返回的promise
+*/
+
+async mounted () {
+    // 分发异步action,将数据从后台请求到vuex中
+    // 前期需要去服务器端关一下请求后端路由时的权限验证
+
+    // 方式2: callback + nextTick()  此方法要修改actions,是可以传回调函数,配合在对应action进行调用
+    /* this.$store.dispatch('getCategorys', ()=>{  //数据已经变了
+      this.$nextTick(()=>{
+          // swiper对象必须要在列表数据显示之后创建
+          new Swiper (this.$refs.sc1, {
+            loop: true, // 循环模式选项
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+            }
+          })
+      })
+    }) */
+    this.$store.dispatch('getShops')
+    this.$store.dispatch('getAddress')
+
+    /* 方式3: 利用dipatch()返回的promise 配合async await 代码最简洁,
+    小细节:因为是异步发送所以要放到发送发送数据方法最后再发送, 且不需要书写nextTick */
+    await this.$store.dispatch('getCategorys') // dispatch返回的promise在数据更新且界面更新之后才成功
+
+    // swiper对象必须要在列表数据显示之后创建
+    new Swiper('.swiper-container', {   // eslint-disable-line
+      loop: true, // 循环模式选项
+      pagination: { // 如果需要分页器
+        el: '.swiper-pagination'
+      }
+    })
+  },
+
+ 
+
+  // 方式1: watch + nextTick()
+  watch: { // 非深度监视,只监视到了数据变化,界面此时是否变化不确定
+    /**
+        * 1.更新数据
+        * 2.立即同步调用监视回调函数
+        * 3.异步更新界面
+        *  */
+    /* categorys () {   // categorys初始数据赋值的变化,此时界面不一定变化: [] ==> [...]
+        // 必须配合this.$nextTick()
+        // $nextTick()将回调延迟到下次DOM更新循环后执行.在修改数据之后立即使用它，然后等待 DOM 更新
+        this.$nextTick(()=>{
+            // swiper对象必须要在列表数据显示之后创建
+            //new Swiper('.swiper-container', {   // eslint-disable-line
+            new Swiper ('.swiper-container', {
+            loop: true, // 循环模式选项
+            pagination: { // 如果需要分页器
+                el: '.swiper-pagination'
+            }
+            })
+        })
+        } */
+  }
+
 </script>
+
