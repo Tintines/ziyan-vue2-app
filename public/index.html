@@ -6,14 +6,27 @@
     <!-- viewport适配 -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <link rel="stylesheet" href="./css/bootstrap.css">
-    <title>vuehh</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/reset.css">
+    <!-- 引入阿里在线图标库 -->
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_518606_xzdcpfq0ve.css">
+    <title>ziyan</title>
+    <!-- 解决点击响应0.3s延时问题 -->
+    <script src="https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
+    <script>
+      if ('addEventListener' in document) {
+        document.addEventListener('DOMContentLoaded', function() {
+          FastClick.attach(document.body);
+        }, false);
+      }
+    </script>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but vuehh doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
+    
+
   </body>
 </html>

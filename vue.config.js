@@ -1,8 +1,10 @@
 const path = require('path')
 const px2rem = require('postcss-px2rem')
 /* 配置postcs-px2rem */
+/* 此时设计稿为375!!! 如果设置成75时,那么控制台展示375*667设备尺寸时,显示尺寸会变成一半 */
+/* 即设计稿要是750,那就将控制台显示尺寸调成自定义750*1334 */
 const postcss = px2rem({
-  remUnit: 75                               // 设计稿等分之后的值，等分的比例同页面rem的比例是一致的
+  remUnit: 37.5       // 设计稿10等分之后的值，等分的比例同页面rem的比例(lib-flexible文件里面修改)是一致的
 })
 
 module.exports = {  
@@ -17,7 +19,7 @@ module.exports = {
     }
   },
 
-  /* 脚手架配置 */
+  /* vue-li 脚手架配置, 最终都会转化为Webpack的配置 */
   /* 临时关闭eslint的警告 */
   lintOnSave: false,
 
