@@ -44,3 +44,5 @@
 
 ## 4. 使用vue-i18n实现vue应用的国际化
     README_i18n.md
+
+## 5. 自动登录 autoLogin
