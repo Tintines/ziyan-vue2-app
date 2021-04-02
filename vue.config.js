@@ -45,4 +45,14 @@ module.exports = {
       }
     }
   },
+
+  /* 国际化i18n配置 */
+  pluginOptions: {
+    i18n: {
+      locale: 'zh_CN',
+      fallbackLocale: 'en',
+      localeDir: '/language/lang',
+      enableInSFC: false
+    }
+  }
 }
