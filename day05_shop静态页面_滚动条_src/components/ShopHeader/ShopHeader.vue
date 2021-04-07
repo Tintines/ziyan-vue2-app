@@ -260,12 +260,13 @@
 
         /* 商家详情 */
         .shop-brief-modal
-            /* position absolute                   // 方法一: 背景遮罩层, 此时
+            position absolute                       // 子元素脱离文档流父元素必须设置宽高度!!!
+            z-index 999                  
             top 0
             right 0
             left 0
             bottom 0
-            background-color rgba(0, 0, 0, .5) */
+            // background-color rgba(0, 0, 0, .5)   // 方法一: 背景这遮罩层
             .brief-modal-content 
                 width 90%
                 background #fff
@@ -366,12 +367,13 @@
 
         /* 活动弹出列表 */
         .activity-sheet
-            /* position absolute                   // 方法一: 背景这遮罩层
+            position absolute                       // 子元素脱离文档流父元素必须设置宽高度!!!
+            z-index 999                  
             top 0
             right 0
             left 0
             bottom 0
-            background-color rgba(0, 0, 0, .5) */
+            // background-color rgba(0, 0, 0, .5)   // 方法一: 背景这遮罩层
             .activity-sheet-content 
                 /* 此处必须使用: position absolute使其脱离文档流!!!!!!!不然会影响到其下方的元素排列 */
                 position absolute           // 高度由内容撑开,只需要绝对定位+bottom为0 即可,高度由内容从下往上顶

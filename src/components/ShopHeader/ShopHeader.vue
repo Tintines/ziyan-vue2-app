@@ -1,122 +1,145 @@
 <template>
     <section class="shop-header">
-        <nav class="shop-nav" style="background-image: url('https://fuss10.elemecdn.com/f/5c/ead54394c3de198d3e6d3e9111bbfpng.png')">
-            <a href="" class="back">
+        <!-- <nav class="shop-nav" style="background-image: url('https://fuss10.elemecdn.com/f/5c/ead54394c3de198d3e6d3e9111bbfpng.png')"> -->
+        <!-- style中书写js表达式, 连字符 连接得CSS属性,需写成大驼峰!!! -->
+        <nav class="shop-nav" :style="{backgroundImage: `url(${info.bgImg})`}">
+            <!-- 编程式跳转 -->
+            <a href="" class="back" @click="$router.replace('/msite')">
                 <i class="iconfont icon-arrow_left"></i>
             </a>
         </nav>
-        <div class="shop-content">
-            <img class="content-image" src="https://fuss10.elemecdn.com/8/40/02872ce8aefe75c16d3190e75ad61jpeg.jpeg" alt="商家logo">
+        <div class="shop-content" @click="isShowBulletin=true">
+            <img class="content-image" :src="info.avatar" alt="商家logo">
             <div class="content-header">
                 <h2 class="content-title">
                     <span class="content-tag">品牌</span>
-                    <span class="content-name ellipsis">集合一品(西宫店)</span>
+                    <span class="content-name ellipsis">{{info.name}}</span>
                     <i class="content-icon"></i>
                 </h2>
                 <div class="shop-message">
-                    <span class="shop-message-detail">5</span>
-                    <span class="shop-message-detail">月售90单</span>
-                    <span class="shop-message-detail">硅谷专送<span>约28分钟</span></span>
-                    <span class="shop-message-detail">距离1000m</span>
+                    <span class="shop-message-detail">{{info.score}}</span>
+                    <span class="shop-message-detail">月售{{info.sellCount}}单</span>
+                    <span class="shop-message-detail">{{info.description}}<span>约{{info.deliveryTime}}分钟</span></span>
+                    <span class="shop-message-detail">距离{{info.distance}}</span>
                 </div>
-                <span class="shop-notice ellipsis">是以粥为特色的中式营养快餐，自2004年10月18日创立“嘉和一品”品牌至今</span>
+                <span class="shop-notice ellipsis">{{info.bulletin}}</span>
             </div>
         </div>
         <!-- 优惠 -->
-        <div class="shop-header-discounts">
+        <!-- 
+            初始显示异常: Cannot read property '0' of undefined"
+            原因:  初始数据是一个空对象, 但表达式: info.supports[0]; 是个三层表达式
+                    当info是初始空对象(state中为空),info.supports得到undefined但不会报错;继续info.supports[0] 立即报错
+                    表达式分类: 
+                        a : 一层表达式
+                        a.b : 二层表达式
+                    a.b.c : 三层表达式
+                    .....
+            解决办法:
+                思路: 对需要初始数据显示的地方整体进行判断,无数据时隐藏,数据回来再显示
+                正确: v-if    在没有数据时不解析/编译这块模板, 不生成标签
+                错误: v-show  在没有数据时也会解析/编译这块模板  ==> 导致报错!!!
+        -->
+        <!-- 在使用info但其初始值为{}时, 通过 v-if="info.supports" 在不编译情况下先进行判断 -->
+        <div class="shop-header-discounts" v-if="info.supports" @click="isShowSupports=true">
             <div class="discounts-left">
-                <div class="activity activity-green">
-                    <span class="content-tag">首单</span>
-                    <span class="activity-content">新用户下单立减14元</span>
+                <!-- 根据数据中的type值确定对应类名, 可以先将类名初始化成一个数组,在依靠对应type直接进行读取 -->
+                <div class="activity" :class="supportClasses[info.supports[0].type]">
+                    <span class="content-tag">{{info.supports[0].name}}</span>
+                    <span class="activity-content">{{info.supports[0].content}}</span>
                 </div>
             </div>
+            <!-- 通过显示优惠数组的长度来显示总共几个优惠 -->
             <div class="discounts-right">
-                3个优惠<i class="icon1"></i>
+                {{info.supports.length}}个优惠<i class="icon1"></i>
             </div>
         </div>
 
         <!-- 公告区,隐藏状态 -->
-        <div class="shop-brief-modal" style="display: none">
-            <div class="brief-modal-content">
-                <h2 class="content-title">
-                    <span class="content-tag">品牌</span>
-                    <span class="content-name">嘉和嘉和一一品(温都水城)</span>
-                </h2>
-                <ul class="brief-modal-msg">
-                    <li>
-                        <h3>3.5</h3>
-                        <span>评分</span>
-                    </li>
-                    <li>
-                        <h3>90单</h3>
-                        <span>月售</span>
-                    </li>
-                    <li>
-                        <h3>约28分钟</h3>
-                        <span>硅谷专送</span>
-                    </li>
-                    <li>
-                        <h3>4元</h3>
-                        <span>配送费用</span>
-                    </li>
-                    <li>
-                        <h3>1000m</h3>
-                        <span>距离</span>
-                    </li>
-                </ul>
-                <h3 class="brief-modal-title">
-                    <span>公告</span>
-                </h3>
-                <div class="brief-modal-notice">
-                    是以粥为特色的中式营养快餐，自2004年10月18日创立“嘉和一品”品牌至今
-                    是以粥为特色的中式营养快餐，自2004年10月18日创立“嘉和一品”品牌至今
+        <!-- 添加过渡 xxx-enter-active xxx-leave-active ; xxx-enter xxx-enter-to ; xxx-leave xxx-leave-to 
+        需要使用父级引用写在它包裹的第一个class类名下 -->
+        <transition name="fade">
+            <div class="shop-brief-modal" v-show="isShowBulletin">
+                <div class="brief-modal-content">
+                    <h2 class="content-title">
+                        <span class="content-tag">品牌</span>
+                        <span class="content-name">{{info.name}}</span>
+                    </h2>
+                    <ul class="brief-modal-msg">
+                        <li>
+                            <h3>{{info.rating}}</h3>
+                            <span>评分</span>
+                        </li>
+                        <li>
+                            <h3>{{info.sellCount}}单</h3>
+                            <span>月售</span>
+                        </li>
+                        <li>
+                            <h3>约{{info.deliveryTime}}分钟</h3>
+                            <span>硅谷专送</span>
+                        </li>
+                        <li>
+                            <h3>{{info.deliveryPrice}}元</h3>
+                            <span>配送费用</span>
+                        </li>
+                        <li>
+                            <h3>{{info.distance}}</h3>
+                            <span>距离</span>
+                        </li>
+                    </ul>
+                    <h3 class="brief-modal-title">
+                        <span>公告</span>
+                    </h3>
+                    <div class="brief-modal-notice">
+                        {{info.bulletin}}
+                    </div>
+                    <!-- 关闭icon -->
+                    <div class="mask-footer" @click="isShowBulletin=false">
+                        <span class="iconfont icon-close"></span>
+                    </div>
                 </div>
-                <!-- 关闭icon -->
-                <div class="mask-footer">
-                    <span class="iconfont icon-close"></span>
-                </div>
+                <!-- 方法一遮罩层直接通过父元素的背景设置 -->
+                <!-- 方法二遮罩层 -->
+                <div class="brief-modal-cover" @click="isShowBulletin=false"></div>
             </div>
-            <!-- 方法一遮罩层直接通过父元素的背景设置 -->
-            <!-- 方法二遮罩层 -->
-            <div class="brief-modal-cover"></div>
-        </div>
+        </transition>
 
         <!-- 优惠活动弹窗,隐藏状态 -->
-        <div class="activity-sheet" style="display: none">
+        <div class="activity-sheet" v-show="isShowSupports">
             <div class="activity-sheet-content">
                 <h2 class="activity-sheet-title">优惠活动</h2>
                 <ul class="list">
-                    <li class="activity-item activity-green">
+                    <li class="activity-item" :class="supportClasses[support.type]"
+                        v-for="(support, index) in info.supports" :key="index">
                         <span class="content-tag">
-                            首单
+                            {{support.name}}
                         </span>
-                        <span class="activity-content">新用户下单立减17元(不与其它活动同享)</span>
-                    </li>
-                    <li class="activity-item activity-red">
-                        <span class="content-tag">
-                            满减
-                        </span>
-                        <span class="activity-content">满35减19，满65减35</span>
-                    </li>
-                    <li class="activity-item activity-orange">
-                        <span class="content-tag">
-                            特价
-                        </span>
-                        <span class="activity-content">[立减19.5元] 欢乐小食餐</span>
+                        <span class="activity-content">{{support.content}}</span>
                     </li>
                 </ul>
-                <div class="activity-sheet-close">
+                <div class="activity-sheet-close" @click="isShowSupports=false">
                     <span class="iconfont icon-close"></span>
                 </div>
             </div>
-            <div class="activity-sheet-cover"></div>
+            <div class="activity-sheet-cover" @click="isShowSupports=false"></div>
         </div>
     </section>
 </template>
 
 <script type="text/ecmascript-6">
+    import {mapState} from 'vuex'
     export default {
+        data() {
+            return {
+                isShowBulletin: false,      // 公告
+                isShowSupports: false,      // 优惠列表
+                supportClasses: ['activity-green', 'activity-red', 'activity-orange']   // 标签类名
+            }
+        },
 
+        computed: {
+            ...mapState(['info'])
+        }
     }
 </script>
 
@@ -260,17 +283,27 @@
 
         /* 商家详情 */
         .shop-brief-modal
-            /* position absolute                   // 方法一: 背景遮罩层, 此时
+            position absolute  
+            z-index 888                      
             top 0
             right 0
             left 0
             bottom 0
-            background-color rgba(0, 0, 0, .5) */
+            // background-color rgba(0, 0, 0, .5)       // 方法一: 背景遮罩层, 此时
+            
+            /* 通过父级引用,添加过渡, 过渡效果卡顿有问题,是由子元素脱离文档流,父元素高度丢失导致的问题 */
+            &.fade-enter-active, &.fade-leave-active    
+                transition opacity .3s
+            &.fade-enter, &.fade-leave-to
+                opacity 0
+            &.fade-enter-to, &.fade-leave
+                opacity 1
+
             .brief-modal-content 
                 width 90%
                 background #fff
                 border-radius 5px
-                z-index 99
+                z-index 999
                 margin 0 auto
                 padding 25px 20px
                 box-sizing border-box
@@ -358,6 +391,7 @@
             /* 方法二遮罩层 */
             .brief-modal-cover
                 position absolute
+                z-index 99
                 top 0
                 right 0
                 left 0
@@ -366,12 +400,13 @@
 
         /* 活动弹出列表 */
         .activity-sheet
-            /* position absolute                   // 方法一: 背景这遮罩层
+            position absolute                       // 子元素脱离文档流父元素必须设置宽高度!!!
+            z-index 999                  
             top 0
             right 0
             left 0
             bottom 0
-            background-color rgba(0, 0, 0, .5) */
+            // background-color rgba(0, 0, 0, .5)   // 方法一: 背景这遮罩层
             .activity-sheet-content 
                 /* 此处必须使用: position absolute使其脱离文档流!!!!!!!不然会影响到其下方的元素排列 */
                 position absolute           // 高度由内容撑开,只需要绝对定位+bottom为0 即可,高度由内容从下往上顶
@@ -390,11 +425,11 @@
                     margin-bottom 15px
                 .list 
                     font-size 16px
-                    // height 160px        // 通过滚动条查看
+                    // height 160px         // 通过滚动条查看
                     .activity-item
                         margin-bottom 12px
                         font-size 12px
-                        &.activity-green
+                        &.activity-green    // 不同标签背景颜色
                             .content-tag
                                 background-color rgb(112, 188, 70)
                         &.activity-red
