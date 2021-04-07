@@ -10,7 +10,9 @@ import {
     RESET_TOKEN,
     RECEIVE_INFO,
     RECEIVE_GOODS,
-    RECEIVE_RATINGS
+    RECEIVE_RATINGS,
+    ADD_FOOD_COUNT,
+    REDUCE_FOOD_COUNT
   } from './mutation-types'  
 import {
     reqAddress,
@@ -115,6 +117,15 @@ export default {
             const ratings = result.data;
             commit(RECEIVE_RATINGS, {ratings})
             typeof callback==='function' && callback();
+        }
+    },
+
+    /* 更新food中的数量的同步action */
+    updateFoodCount({commit}, {isAdd, food}) {
+        if(isAdd) {
+            commit(ADD_FOOD_COUNT, {food});
+        } else {
+            commit(REDUCE_FOOD_COUNT, {food});
         }
     }
 

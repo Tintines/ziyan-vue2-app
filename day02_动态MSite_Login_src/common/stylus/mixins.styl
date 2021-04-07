@@ -2,7 +2,7 @@ $green = #02a774;
 $yellow = #F5A100;
 $bc = #e4e4e4;
 
-// 一像素下边框
+// 一像素下边框, 需要对应元素添加class="border-1px" 来实现!!!
 bottom-border-1px($color)
   position relative
   border none
@@ -14,8 +14,7 @@ bottom-border-1px($color)
     width 100%
     height 1px
     background-color $color
-    transform scaleY(0.5)
-
+    
 // 一像素上边框
 top-border-1px($color)
   position relative
@@ -29,16 +28,18 @@ top-border-1px($color)
     height 1px
     background-color $color
 
-//根据像素比缩放1px像素边框
+// 根据像素比缩放通过伪类添加的1px像素边框,确定最终是缩放.5 还是 .333
 @media only screen and (-webkit-device-pixel-ratio: 2 )
   .border-1px
-    &::before
+    &::before, &::after
       transform scaleY(.5)
 
 @media only screen and (-webkit-device-pixel-ratio: 3 )
   .border-1px
-    &::before
+    &::before, &::after
       transform scaleY(.333333)
+
+
 
 //根据像素比来使用 2x图 3x图
 bg-image($url)
@@ -48,12 +49,16 @@ bg-image($url)
 
 //清除浮动
 clearFix()
-  &::after
+  &::before, &::after
     content ''
     display table
+  &::after
     clear both
 
+// 单行缩略...
 .ellipsis
-    overflow hidden
-    text-overflow ellipsis
-    white-space nowrap
+  overflow hidden
+  text-overflow ellipsis
+  white-space nowrap
+  font-weight bold
+  

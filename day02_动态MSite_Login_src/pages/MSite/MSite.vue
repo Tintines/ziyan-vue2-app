@@ -234,9 +234,9 @@ export default {
                         .shop_left
                             float left
                             box-sizing border-box
-                            width 23%
-                            height 23%
-                            padding-right 10px
+                            width 70px
+                            height 70px
+                            margin-right 10px
                             .shop_img
                                 display block   
                                 width 100%
@@ -245,9 +245,11 @@ export default {
                             float right
                             width 77%
                             height 16px
+                            
                             .shop_detail_header
                                 clearFix()
                                 width 100%
+                                padding-top 6px
                                 .shop_title
                                     float left
                                     width 200px
@@ -280,7 +282,7 @@ export default {
                             .shop_rating_order
                                 width 100%
                                 height 16px
-                                margin-top 22px
+                                margin-top 16px
                                 margin-bottom 6px
                                 display flex
                                 align-items center

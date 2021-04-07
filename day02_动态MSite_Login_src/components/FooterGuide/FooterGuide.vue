@@ -1,5 +1,5 @@
 <template>
-    <div class="footer-guide">
+    <div class="footer-guide border-1px">
         <div class="guide-item" :class="{on: $route.path==='/msite'}" @click="goto('/msite')">
             <span><i class="iconfont icon-waimai"></i></span>
             <span>首页</span>

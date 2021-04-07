@@ -3,17 +3,22 @@ import Vue from 'vue'
 淘宝适配, postcss-px2rem  lib-flexible 都要下载配合使用 */
 import 'lib-flexible/flexible'    
 import {Button} from 'mint-ui'
+import VueLazyload from 'vue-lazyload'  // 图片懒加载库包含于mint-ui
 
 import App from './App.vue'
 import router from './router'
 import store from './vuex/store'
 import Header from './components/Header/Header.vue'
+import CartControl from './components/CartControl/CartControl.vue'
 import './validate/validate'        // 直接引入表单验证自定义文件
 /* 有的请求方法不需要被vuex管理,则可以直接将全部方法暴露出去,并挂载到全局$API,并通过它进行调用 */
 import * as API from '@/api'        // 将API对象挂载到Vue的原型对象上 步骤一
 import Star from '@components/Star/Star'
 import i18n from './language/i18n'  // 引入国际化组件 并全局注册
 import './mock/mock-server'         // 引入mockjs
+
+import loading from '@/common/images/loading.gif'   // 用于图片懒加载
+Vue.use(VueLazyload, { loading })   // 内部多了一个全局指令: lazy (在图片未加载出来时前显示该特定图片)
 
 Vue.config.productionTip = false
 
@@ -23,6 +28,8 @@ Vue.prototype.$API = API            // 将API对象挂载到Vue的原型对象�
 Vue.component('Header', Header)     // Header
 Vue.component('Star', Star)         // Star
 Vue.component(Button.name, Button)  // mt-button
+Vue.component('CartControl', CartControl)   // 购物进步器
+
 new Vue({
   render: h => h(App),
   /* 注册路由, 

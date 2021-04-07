@@ -1,69 +1,77 @@
 <template>
-    <section class="goods">
-        <!-- 左侧分类列表 -->
-        <div class="menu-wrapper" ref="left">
-            <ul>
-                <li class="menu-item" v-for="(good, index) in goods"
-                :key="good.name" :class="{current: index===currentIndex}">
-                    <!-- 使用v-if对是否有图标进行判断, 没有图标就不解析不去显示 -->
-                    <img class="item-icon" v-if="good.icon" :src="good.icon" alt="aa">
-                    <span class="text">{{good.name}}</span>
-                </li>
-            </ul>
-        </div>
-        <!-- 右侧分类展示 -->
-        <div class="foods-wrapper" ref="right">
-            <ul ref="rightUl">
-                <!-- 大类 -->
-                <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
-                    <h3 class="title">{{good.name}}</h3>
-                    <!-- 具体小类 -->
-                    <ul>
-                        <li class="food-item" v-for="(food, index) in good.foods" :key="index">
-                            <!-- 菜图标 -->
-                            <div class="icon">
-                                <img :src="food.icon" >
-                            </div>
-                            <div class="content">
-                                <h4 class="name">{{food.name}}</h4>
-                                <div class="desc">{{food.description}}</div>
-                                <div class="extra">
-                                    <span class="count">月售{{food.sellCount}}份</span>
-                                    <span>好评率{{food.rating}}%</span>
+    <div>
+        <section class="goods">
+            <!-- 左侧分类列表 -->
+            <div class="menu-wrapper" ref="left">
+                <ul ref="leftUl">
+                    <li class="menu-item border-1px" v-for="(good, index) in goods" :key="good.name" 
+                    :class="{current: index===currentIndex}" @click="clickItem(index)">
+                        <!-- 使用v-if对是否有图标进行判断, 没有图标就不解析不去显示 -->
+                        <img class="item-icon" v-if="good.icon" :src="good.icon" alt="aa">
+                        <span class="text">{{good.name}}</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- 右侧分类展示 -->
+            <div class="foods-wrapper" ref="right">
+                <ul ref="rightUl">
+                    <!-- 大类 -->
+                    <li class="food-list-hook" v-for="(good, index) in goods" :key="index">
+                        <h3 class="title">{{good.name}}</h3>
+                        <!-- 具体小类 -->
+                        <ul>
+                            <li class="food-item border-1px" v-for="(food, index) in good.foods" 
+                            :key="index" @click="showFood(food)">
+                                <!-- 菜图标 -->
+                                <div class="icon">
+                                    <img :src="food.icon" >
                                 </div>
-                                <div class="price">
-                                    <span class="now">￥{{food.price}}</span>
-                                    <!-- 使用v-if处理没有原价就不解析不去显示的问题 -->
-                                    <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
+                                <div class="content">
+                                    <h4 class="name">{{food.name}}</h4>
+                                    <div class="desc">{{food.description}}</div>
+                                    <div class="extra">
+                                        <span class="count">月售{{food.sellCount}}份</span>
+                                        <span>好评率{{food.rating}}%</span>
+                                    </div>
+                                    <div class="price">
+                                        <span class="now">￥{{food.price}}</span>
+                                        <!-- 使用v-if处理没有原价就不解析不去显示的问题 -->
+                                        <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
+                                    </div>
+                                    <div class="cartcontrol-wrapper">
+                                        <CartControl :food="food"/>
+                                    </div>
                                 </div>
-                                <div class="cartcontrol-wrapper">
-                                    CarControl加减器组件
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </section>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <Food :food="food" ref="food"/>
+    </div>
 </template>
 
 <script type="text/ecmascript-6">
     import {mapState} from 'vuex'
     import BScroll from 'better-scroll'
+    import Food from '@/components/Food/Food.vue'
+
     export default {
         name: 'Goods',
         data() {
             return {
-                tops: [],   // 右侧每个分类<li>的top值的数组tops: 第一次列表显示后统计后面不再变化
-                scrollY: 0  // 右侧列表滑动的Y轴坐标: scrollY  在滑动过程中不断改变
+                tops: [],    // 右侧每个分类<li>的top值的数组tops: 第一次列表显示后统计后面不再变化
+                scrollY: 0,  // 右侧列表滑动的Y轴坐标: scrollY  在滑动过程中不断改变
+                food: {}     // 需要显示的food,初始化为空对象,通过绑定事件点击对应的food时,才传入对应的food数据!!!
             }
         },
         
         methods: {
             /* 数据回来后计算右侧所有分类li的top值所组成的数据 */
             /* 只需计算一次!!! */
-            initTops() {
+            /* 使用 _ 来区分是否为事件相关的方法函数 */
+            _initTops() {
                 const tops = [];
                 let top = 0;        // 起始值为0
                 tops.push(top);     // 将起始值放到数组中
@@ -82,12 +90,18 @@
             },
 
             /* 初始化BScroll */
-            initScroll() {
+            _initScroll() {
                 /* 左侧列表初始化滑动 */
-                new BScroll(this.$refs.left, {})   
+                /* 单一实例化: 
+                        将该实例挂载到组件this上!!使得生成一次实例,外部也可以使用 */
+                this.leftScroll = new BScroll(this.$refs.left, {
+                    click: true         // 分发自定义的click事件,betterscroll默认禁止了click事件
+                })   
                 
                 /* 右侧列表初始化滑动 */
-                const rightScroll = new BScroll(this.$refs.right, {     // 可传入配置选项
+                /* 单一实例化 */
+                this.rightScroll = new BScroll(this.$refs.right, {     // 可传入配置选项
+                    click: true,        // 分发自定义的click事件
                     probeType: 1,       // 非实时 / 触摸    该参数决定滚动on监听的响应时机
                     // probeType: 2,    // 实时 / 触摸
                     // probeType: 3     // 实时 / 触摸 / 惯性 / 编码
@@ -96,15 +110,31 @@
                     当你想通过正在进行的操作触发其他事情, 就必然想到绑定监听!!! 
                     由better-scroll来控制滚动,那就去找他提供的监听 */
                 /* 给右侧列表绑定滚动scroll 滚动开始监听事件 */
-                rightScroll.on('scroll', ({x, y}) => {      // eslint-disable-line
-                    this.scrollY = Math.abs(y)              // 更新data状态对应的数据!!!
+                this.rightScroll.on('scroll', ({x, y}) => {     // eslint-disable-line
+                    this.scrollY = Math.abs(y)                  // 更新data状态对应的数据!!!
                 })
                 /* 给右侧列表绑定滚动scrollEnd 滚动结束事件监听, 获取停止时的最终 scrollY 值 */
-                rightScroll.on('scrollEnd', ({x, y}) => {   // eslint-disable-line
+                this.rightScroll.on('scrollEnd', ({x, y}) => {  // eslint-disable-line
                     // console.log('scrollEnd', y);
-                    this.scrollY = Math.abs(y)              // 更新data中对应数据
+                    this.scrollY = Math.abs(y)                  // 更新data中对应数据
                 })
+            },
 
+            /* 左侧列表项点击, 右侧滑到具体对应分类 */
+            clickItem(index) {
+                const top = this.tops[index];   // 获得点击项所在索引值对应的tops数组的对应值
+                this.scrollY = top;             // 立即更新scrollY为目标值(立即选中左侧当前分类项:由scrollY计算而来)
+                this.rightScroll.scrollTo(0, -top, 300)     // 让右侧列表滑动到对应位置(x, y, time)
+            },
+
+            /* 组件间调用方法: 
+                父组件调用子组件的方法: ref;
+                子组件调用父组件的方法: props */
+            /* 点击显示具体食品详情 */
+            showFood(food) {
+                this.food = food;               // 将对应food食品更新到data对应数据中
+                /* 通过this.$refs.food调用子组件的方法 */
+                this.$refs.food.toggleShow();   // 在子组件中定义 toggleShow() 方法,然后在父组件中进行调用
             }
         },
 
@@ -116,11 +146,18 @@
                 const {scrollY, tops} = this;
                 /* top为tops遍历的当前的值; tops[index+1]为紧挨着的那个值 */
                 /* findIndex找不到返回-1, 所以必须先给tops计算产生值之后才能调用该方法 */
-
                 /* 错误简写写法,需要省略{}和return  */
                 // return tops.findIndex((top, index) => {scrollY >= top && scrollY < tops[index+1]}) 
-                return tops.findIndex((top, index) => scrollY >= top && scrollY < tops[index+1])
-                
+                /* 右侧滑动时,左侧项目始终选中对应项,并可见 */
+                const index = tops.findIndex((top, index) => scrollY >= top && scrollY < tops[index+1])
+                if(index!==this.index && this.leftScroll) {         // 当两次下标不同,且this.leftScroll被挂载时
+                    /* 将新的下标保存起来,供下次判断使用 */
+                    this.index = index;                             // eslint-disable-line
+                    const li = this.$refs.leftUl.children[index];   // 获得index对应的资源数li
+                    /* 该方法只需要传入需要滑动到的元素和滑动所需时间, 将左侧列表滑动到当前右侧的分类处 */
+                    this.leftScroll.scrollToElement(li, 300);       
+                }
+                return index;
             }
         },
 
@@ -129,12 +166,16 @@
             goods() {                       // 浅层监视goods数据变化
                 this.$nextTick(() => {      // 页面再次更新时调用
                     /* 初始化滑动 */
-                    this.initScroll();      // 定义实例化方法
+                    this._initScroll();      // 定义实例化方法
                     /* 统计右侧所有分类li的top值所组成的数组 */
-                    this.initTops();
+                    this._initTops();
                 })
             }
         },
+
+        components: {
+            Food
+        }
 
     }
 </script>
@@ -185,7 +226,7 @@
                     /* 子元素继承的样式优先级最低,所以给他的父元素设置统一样式, 激活时单独设置字体大小即可 */
                     /* font-size 12px */
                     
-        /* foods-wrapper */
+        /* 食品容器 */
         .foods-wrapper
             // overflow auto             // 测试能否正确自动生成滚动条  
             padding-left 14px
