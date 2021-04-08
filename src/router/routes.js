@@ -58,6 +58,10 @@ export default [
             {
                 path: '/shop/info',
                 component: Info
+            },
+            {
+                path: '',
+                redirect: '/shop/goods'
             }
         ]
     },

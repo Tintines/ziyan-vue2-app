@@ -33,7 +33,10 @@
             }
         })
     7). 在组件中与vuex通信
+        /* states要受vuex模块化编程影响 */
         读取state数据: ...mapState({user: state => state.user.user})
+
+        /* getters不受vuex模块化编程影响,还可以直接写,他会自己在所有模块中进行查找,但是名字要唯一 */
         读取getter数据: ...mapGetters(['totalShopCount'])
         更新状态数据: this.$store.dispatch('actionName')   this.$store.commit('mutationName')    
     
