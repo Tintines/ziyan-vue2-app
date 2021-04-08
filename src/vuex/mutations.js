@@ -13,7 +13,8 @@ import {
     RECEIVE_GOODS,
     RECEIVE_RATINGS,
     ADD_FOOD_COUNT,
-    REDUCE_FOOD_COUNT
+    REDUCE_FOOD_COUNT,
+    CLEAR_CART
 } from './mutation-types'
 
 /* 暴露的是一个对象, 其包含多个用于更新state数据状态的mutation函数方法 */
@@ -86,5 +87,12 @@ export default {
                 state.cartFoods.splice(index, 1);
             }
         }
-    }
+    },
+
+    [CLEAR_CART] (state) {
+        /* 需要先将cartFoods中所food的count变为0 !!! */
+        state.cartFoods.forEach(food => food.count = 0);
+        /* 再重置购物车数组; 不能直接重置(此时其他组件读到count值还在) */
+        state.cartFoods = [];
+    },
 }

@@ -9,11 +9,16 @@
         注册路由: /shop/:id
         传递参数: '/shop/1' / {path: '/shop/1'} / {name: 'shop', params: {id: 1}}
     b. 将params参数转换成props
-    c. 处理带params参数的子路由和<router-link>
+    c. 处理带params参数的子路由 和<router-link>(修改成动态路径)
     d: 自动跳转路由: redirect配置
     e. 在调用push()进行路由跳转时(需要携带参数)   ---面试可重点说
-        直接路径path: 自动跳转有效
-        配置对象指定name/params: 自动跳转失效
+        直接路径path: 自动跳转有效             @click="$router.push(`/shop/${shop.id}`)"
+        配置对象指定name/params: 自动跳转失效   @click="$router.push({
+                                                name: 'shop',
+                                                params: {
+                                                id: shop.id
+                                                }
+                                            })"
 
 ### 2). 根据指定的商家id获取对应的商家数据
     a. 完成mock接口
@@ -30,16 +35,17 @@
           保存的是购物车中food的数量count
           结构: shopId_key: {foodId1: count2, foodId2: count2}
       什么时候保存?
-          在Shop组件卸载前beforeDestroy()中保存, 根据shop的id和cartFoods生成要保存数据
+          1.在Shop组件卸载前beforeDestroy()中保存, 根据shop的id和cartFoods生成要保存数据
+          2.在刷新页面的时候需要借助window中的unload监听事件重新进行保存
       什么时候读取?
-          在请求获取到新的shop后读取sessionStorage中保存的cartCounts, 生成一个cartFoods的数组
+          在请求获取到新的shop后读取sessionStorage中保存的cartCounts, 对shop中的food进行响应式添加count属性加工后生成一个cartFoods的数组
     b. 在商家界面刷新, 购物车数据会丢失
       原因: 
-          刷新时vuex的state中的数据初始值(原有的数据都没有)
-          刷新时beforeDestroy()不调用(那最新的cart数据就没有保存)
+          刷新时vuex的state中的数据恢复为初始值(原有的数据都没有)
+          刷新时Vue中生命周期钩子beforeDestroy()不调用(那最新的cart数据就没有保存)
       解决:
           利用窗口卸载的监听来保存cart数据
-          在Shop组件的mounted中给window绑定unload监听, 保存当前的cart数据到sessionStorage
+          在Shop组件的mounted中给window绑定unload监听, 保存当前的最新的cart数据到sessionStorage
 
 ## 3. Ratings组件与ShopInfo组件
     1). 使用计算属性对列表进行过滤显示
