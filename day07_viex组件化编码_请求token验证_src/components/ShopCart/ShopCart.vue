@@ -56,12 +56,13 @@
             }
         },
 
+        /* 计算属性,当读取时自动进行调用 */
         computed: {
-            // ...mapState(['info', 'cartFoods']),
+            // ...mapState(['info', 'cartFoods'])
             /* states要受vuex模块化编程影响 */
             ...mapState({
                 cartFoods: state => state.shop.cartFoods,
-                info: state => state.shop.info,
+                info: state => state.shop.shop.info || {},    // 初始化没有数据赋值为空
             }),
             /* getters不受vuex模块化编程影响,还可以直接写,他会自己在所有模块中进行查找,但是名字要唯一 */
             ...mapGetters(['totalCount', 'totalPrice']),
@@ -70,6 +71,7 @@
             payClass() {
                 const {totalPrice} = this;
                 const {minPrice} = this.info;
+                console.log(totalPrice);
                 return minPrice > totalPrice ? 'not-enough' : 'enough';
             },
 
