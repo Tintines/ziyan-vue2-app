@@ -23,6 +23,11 @@ module.exports = {
   /* 临时关闭eslint的警告 */
   lintOnSave: false,
 
+  /* 是否开启带编译器的Vue版本,当组件内使用template模板时开启; 正常时不使用 */
+  runtimeCompiler: false,
+
+  /* 开发环境使用代理服务器进行转发地址配置!!!
+  当打包部署到生产环境,需要使用Nginx反向代理时,需要配置Nginx配置中的转发地址!!!否则404 */
   devServer:{
     proxy:{
       /* 处理以/api开头路径的请求 */
