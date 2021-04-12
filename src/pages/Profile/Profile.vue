@@ -91,6 +91,14 @@
         <section v-show="user._id" class="profile_my_order logout">
             <mt-button style="width: 100%" type="danger" @click="logout">退出登陆</mt-button>
         </section>
+
+
+        <!-- 测试路由导航!!! -->
+        <section class="profile_my_order border-1px">
+            <router-link to="/a">AAA</router-link>&nbsp;&nbsp;
+            <router-link to="/b">BBB</router-link>&nbsp;&nbsp;
+            <router-link to="/login">去登陆</router-link>
+        </section>
     </section>
     
 </template>

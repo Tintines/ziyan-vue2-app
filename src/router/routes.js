@@ -9,6 +9,23 @@ import Goods from '@/pages/Shop/Goods.vue'
 import Ratings from '@/pages/Shop/Ratings.vue'
 import Info from '@/pages/Shop/Info.vue'
 
+/* 导航守卫测试 */
+import A from '@/pages/Test/A.vue'
+import B from '@/pages/Test/B.vue'
+import B1 from '@/pages/Test/B1.vue'
+import B2 from '@/pages/Test/B2.vue'
+
+/* Vue面试拓展 */
+import Review from '@/pages/Review/Review.vue'
+import SlotTest from '@/pages/Review/SlotTest/SlotTest.vue'
+import MixinTest from '@/pages/Review/MixinTest/MixinTest.vue'
+import ComponentTest from '@/pages/Review/ComponentTest/ComponentTest.vue'
+import EventTest from '@/pages/Review/EventTest/EventTest.vue'
+import ModelTest from '@/pages/Review/ModelTest/ModelTest.vue'
+import ReactiveTest from '@/pages/Review/ReactiveTest/ReactiveTest.vue'
+import LifeTest from '@/pages/Review/LifeTest/LifeTest.vue'
+
+
 /* 将路由数组暴露出去 */
 export default [
     {
@@ -73,6 +90,66 @@ export default [
             }
         ]
     },
+
+
+    /* 路由导航测试 */
+    {
+        path: '/a',
+        component: A
+    },
+    {
+        path: '/b',
+        component: B,
+        children: [
+            {
+                path: '/b/b1',
+                component: B1 
+            },
+            {
+                path: '/b/b1',
+                component: B2 
+            },
+        ] 
+    },
+
+    /* Vue面试拓展 */
+    {
+        path: '/review',
+        component: Review,
+        children: [
+            {
+                path: '/review/slot',
+                component: SlotTest 
+            },
+            {
+                path: '/review/mixin',
+                component: MixinTest 
+            },
+            {
+                path: '/review/component',
+                component: ComponentTest
+            },
+            {
+                path: '/review/event',
+                component: EventTest
+            },
+            {
+                path: '/review/model',
+                component: ModelTest
+            },
+            {
+                path: '/review/reactive',
+                component: ReactiveTest
+            },
+            {
+                path: '/review/life',
+                component: LifeTest
+            }
+        ] 
+    },
+
+
+    /* 配置路由重定向 */
     {
         path: '/',
         redirect: '/msite'      // 配置路由重定向
